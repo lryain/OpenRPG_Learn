@@ -4,10 +4,76 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+	CursorTrace();
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if(!CursorHit.bBlockingHit) return;
+	// 用两个指针来保存当前鼠标下的 Actor 和上一个鼠标下的 Actor
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+	/**
+	* Line trace from cursor. There are several scenarios:
+	* A: LastActor is null && ThisActor is null
+	*	- Do nothing
+	* B: LastActor is null && ThisActor is valid
+	*	- Highlight ThisActor
+	* C: LastActor is valid && ThisActor is null
+	*	- UnHighlight LastActor
+	* D: Both actors are valid, but LastActor != ThisActor 我们从一个 Actor 切换到另一个 Actor
+	*	- UnHighlight LastActor and Highlight ThisActor
+	* E: Both actors are valid, and are the same actor
+	*	- Do nothing
+	*/
+	if (LastActor == nullptr)
+	{
+		if (ThisActor != nullptr)
+		{
+			// Case B - 
+			ThisActor->HighlightActor();
+
+		}
+		else
+		{
+			// Case A - both are ull, do nothing
+		}
+	}
+	else // LastActor is valid
+	{
+		if (ThisActor == nullptr) {
+			// Case C - UnHighlight LastActor
+			LastActor->UnHighlightActor();
+		}
+		else // both actors are valid
+		{
+			if (LastActor != ThisActor)
+			{
+				// Case D
+				LastActor->UnHighlightActor();
+				ThisActor->HighlightActor();
+
+			}
+			else
+			{
+				// Case E - both are valid and the same, do nothing
+			}
+		}
+	}
+
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -56,3 +122,4 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 }
+
