@@ -1,39 +1,33 @@
-// Copyright Kevin.Liu@47129927@qq.com
+﻿// Copyright Kevin.Liu@47129927@qq.com
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "GameFramework/Character.h"
-#include "AuraCharacterBase.generated.h"
+#include "GameFramework/PlayerState.h"
+#include "AuraPlayerState.generated.h"
 
 class UAbilitySystemComponent;
 class UAttributeSet;
 
-UCLASS(Abstract)
-class OPENRPG_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface
+/**
+ * 
+ */
+UCLASS()
+class OPENRPG_API AAuraPlayerState : public APlayerState, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
-
+	
 public:
-	AAuraCharacterBase();
+	AAuraPlayerState();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
-
 protected:
-	virtual void BeginPlay() override;
-
-	// 创建一个武器槽
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	TObjectPtr<USkeletalMeshComponent> Weapon;
-
 	// 存储角色Ability和属性的指针
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent; // AAuraEnemy 中初始化
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
-
-
 };

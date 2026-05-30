@@ -1,4 +1,4 @@
-// Copyright Kevin.Liu@47129927@qq.com
+﻿// Copyright Kevin.Liu@47129927@qq.com
 
 #pragma once
 
@@ -16,5 +16,9 @@ class OPENRPG_API AAuraCharacter : public AAuraCharacterBase
 
 public:
 	AAuraCharacter();
-	
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
+private:
+	void InitAbilityActorInfo();
 };

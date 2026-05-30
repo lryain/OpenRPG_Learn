@@ -1,4 +1,4 @@
-// Copyright Kevin.Liu@47129927@qq.com
+﻿// Copyright Kevin.Liu@47129927@qq.com
 
 #pragma once
 
@@ -18,7 +18,11 @@ class OPENRPG_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 public:
 	AAuraEnemy();
 
+	/** EnemyInterface 接口开始*/
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+	/* EnemyInterface 接口结束 */
 
+protected:
+	virtual void BeginPlay() override;
 };
